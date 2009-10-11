@@ -114,4 +114,4 @@ adaptor (specified in database.yml) that you want to use. The database and
 permissions must already be setup but the tables will be created for you
 from schema.rb.
 
-Copyright (c) 2008 Marcus Wyatt, released under the MIT license
+Copyright (c) 2008 Visfleet, released under the MIT license
