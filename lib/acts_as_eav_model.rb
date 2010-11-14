@@ -80,6 +80,11 @@ module ActiveRecord # :nodoc:
     #
     module EavModel
 
+      MAGIC_FIELD_NAMES = [:created_at, :created_on, :updated_at, :updated_on, :created_by, :updated_by, 
+        :lock_version, :type, :id, :position, :parent_id, :lft, :rgt, :quote_value, :template, :to_ary,
+        :marshal_dump, :marshal_load, :_dump, :_load, :to_yaml_type, :to_yaml, :yaml_initialize, :to_xml, :to_json, :as_json,
+        :from_json, :from_xml,:validate,:validate_on_create,:validate_on_update].freeze
+
       def self.included(base) # :nodoc:
         base.extend ClassMethods
       end
@@ -198,17 +203,17 @@ module ActiveRecord # :nodoc:
         #                                   # the model then method not found is thrown
         #
         def has_eav_behavior(options = {})
-
+          Rails.logger.debug("HERE OPTIONS=#{options.inspect}")
           # Provide default options
-          options[:class_name] ||= self.class_name + 'Attribute'
+          options[:class_name] ||= self.name + 'Attribute'
           options[:table_name] ||= options[:class_name].tableize
           options[:relationship_name] ||= options[:class_name].tableize.to_sym
-          options[:foreign_key] ||= self.class_name.foreign_key
+          options[:foreign_key] ||= "#{self.table_name.singularize.downcase}_id" #self.name.foreign_key
           options[:base_foreign_key] ||= self.name.underscore.foreign_key
           options[:name_field] ||= 'name'
           options[:value_field] ||= 'value'
           options[:fields].collect! {|f| f.to_s} unless options[:fields].nil?
-          options[:parent] = self.class_name
+          options[:parent] = self.name
 
           # Init option storage if necessary
           cattr_accessor :eav_options
@@ -258,9 +263,10 @@ module ActiveRecord # :nodoc:
             unless method_defined? :method_missing_without_eav_behavior
 
               # Carry out delayed actions before save
-              after_validation_on_update :save_modified_eav_attributes
-
+              after_validation :save_modified_eav_attributes,:on=>:update
+              
               # Make attributes seem real
+              alias_method_chain :respond_to?, :eav_behavior
               alias_method_chain :method_missing, :eav_behavior
 
               private
@@ -290,7 +296,7 @@ module ActiveRecord # :nodoc:
           #
           def create_attribute_table(options = {})
             eav_options.keys.each do |key|
-              continue if eav_options[key][:parent] != self.class_name
+              continue if eav_options[key][:parent] != self.name
               model = eav_options[key][:class_name]
 
               return if connection.tables.include?(eav_options[model][:table_name])
@@ -313,7 +319,7 @@ module ActiveRecord # :nodoc:
           #
           def drop_attribute_table(options = {})
             eav_options.keys.each do |key|
-              continue if eav_options[key][:parent] != self.class_name
+              continue if eav_options[key][:parent] != self.name
               model = eav_options[key][:class_name]
               self.connection.drop_table eav_options[model][:table_name]
             end
@@ -345,6 +351,21 @@ module ActiveRecord # :nodoc:
         # option is most likely easier.
         #
         def eav_attributes(model); nil end
+        
+        ##
+        # CLK added a respond_to? implementation so that ActiveRecord AssociationProxy (polymorphic relationships)
+        # does not mask the method_missing implementation here. See:
+        # https://rails.lighthouseapp.com/projects/8994/tickets/2378-associationproxymethod_missing-masks-method_missing-in-models
+        # Updated when certain magic fields (like timestamp columns) were interfering with saves, etc.
+        # http://oldwiki.rubyonrails.org/rails/pages/MagicFieldNames
+        #
+        def respond_to_with_eav_behavior?(method_id, include_private = false)
+          if MAGIC_FIELD_NAMES.include?(method_id.to_sym)
+            respond_to_without_eav_behavior?(method_id, include_private)
+          else
+            true
+          end
+        end
 
         private
 
@@ -416,19 +437,29 @@ module ActiveRecord # :nodoc:
           end
           write_attribute_without_eav_behavior(attribute_name, value)
         end
-
+        
+        ##
+        # Custom method added by ckraybill!
+        #
+        def attribute_empty_with_eav_behavior(attribute_name)
+          !read_attribute_with_eav_behavior(attribute_name).blank?
+        end
+        
         ##
         # Implements eav-attributes as if real getter/setter methods
         # were defined.
-        #
+        # Method modified to support '?' behavior
         def method_missing_with_eav_behavior(method_id, *args, &block)
           begin
             method_missing_without_eav_behavior(method_id, *args, &block)
           rescue NoMethodError => e
-            attribute_name = method_id.to_s.sub(/\=$/, '')
+            m = method_id.to_s
+            attribute_name = m.sub(/\=|\?$/, '')
             exec_if_related(attribute_name) do |model|
-              if method_id.to_s =~ /\=$/
+              if m =~ /\=$/
                 return write_attribute_with_eav_behavior(attribute_name, args[0])
+              elsif m =~ /\?$/
+                return attribute_empty_with_eav_behavior(attribute_name)
               else
                 return read_attribute_with_eav_behavior(attribute_name)
               end
@@ -459,7 +490,7 @@ module ActiveRecord # :nodoc:
         # yield only if attribute_name is a eav_attribute
         #
         def exec_if_related(attribute_name)
-          return false if self.class.column_names.include?(attribute_name)
+          return false if self.class.column_names.include?(attribute_name) || MAGIC_FIELD_NAMES.include?(attribute_name.to_sym)
           each_eav_relation do |model|
             if is_eav_attribute?(attribute_name, model)
               yield model
@@ -493,10 +524,8 @@ module ActiveRecord # :nodoc:
       return if new_attributes.nil?
       attributes = new_attributes.dup
       attributes.stringify_keys!
-
       multi_parameter_attributes = []
-      attributes = remove_attributes_protected_from_mass_assignment(attributes) if guard_protected_attributes
-
+      attributes = sanitize_for_mass_assignment(attributes) if guard_protected_attributes
       attributes.each do |k, v|
         if k.include?("(")
           multi_parameter_attributes << [ k, v ]

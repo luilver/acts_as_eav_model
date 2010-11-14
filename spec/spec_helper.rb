@@ -1,34 +1,38 @@
-$:.unshift(File.dirname(__FILE__) + '/../lib')
 
-ENV["RAILS_ENV"] ||= "test"
+# Configure Rails Envinronment
+ENV["RAILS_ENV"] = "test"
 
-require "rubygems"
-require 'spec'
-require File.expand_path(File.join(File.dirname(__FILE__), "../../../../config/environment"))
-require 'spec/rails'
-require 'active_record/fixtures'
+require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+require "rails/test_help"
+require "rspec/rails"
 
-begin
-  require 'ruby-debug'
-  Debugger.start
-rescue LoadError
-end
+#ActionMailer::Base.delivery_method = :test
+ActionMailer::Base.perform_deliveries = false
+#ActionMailer::Base.default_url_options[:host] = "test.com"
 
-require "acts_as_eav_model"
+Rails.backtrace_cleaner.remove_silencers!
 
-config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
-ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + "/debug.log")
-ActiveRecord::Base.establish_connection(config[ENV['DB'] || 'mysql'])
+# Configure capybara for integration testing
+#require "capybara/rails"
+#Capybara.default_driver   = :rack_test
+#Capybara.default_selector = :css
 
+# Run any available migration
+ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__)
+
+# Load support files
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 plugin_fixture_path = File.expand_path(File.dirname(__FILE__) + "/fixtures/")
 $LOAD_PATH.unshift(plugin_fixture_path)
 
-Spec::Runner.configure do |config|
-  config.use_transactional_fixtures = true
-  config.use_instantiated_fixtures  = false
-  config.fixture_path = plugin_fixture_path
+RSpec.configure do |config|
+  # Remove this line if you don't want Rspec's should and should_not
+  # methods or matchers
+  require 'rspec/expectations'
+  config.include Rspec::Matchers
+
+  # == Mock Framework
+  config.mock_with :rspec
+  config.fixture_path=plugin_fixture_path
 end
-
-load(File.dirname(__FILE__) + "/schema.rb")
-
-alias :doing :lambda
+load(File.dirname(__FILE__) + "/dummy/db/schema.rb")

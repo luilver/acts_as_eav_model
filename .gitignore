@@ -1,0 +1,12 @@
+*~
+.bundle
+spec/dummy/log/*
+spec/dummy/tmp/**/*
+spec/dummy/db/**/*
+.DS_Store
+*.swp
+.idea/*
+*.rails2
+*.back
+vendor/plugins/rails_upgrade
+pkg/*

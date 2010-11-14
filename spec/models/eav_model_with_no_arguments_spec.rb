@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 
 describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options in declaration" do
   fixtures :posts, :post_attributes

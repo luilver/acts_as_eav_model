@@ -1,67 +1,46 @@
+# encoding: UTF-8
+require 'rubygems'
+begin
+  require 'bundler/setup'
+rescue LoadError
+  puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
+end
+
 require 'rake'
-require 'rake/testtask'
 require 'rake/rdoctask'
-require 'spec/rake/spectask'
-require 'spec/rake/verify_rcov'
 
-plugin_name = 'acts_as_eav_model'
+require 'rspec/core'
+require 'rspec/core/rake_task'
 
-desc 'Default: run specs.'
+RSpec::Core::RakeTask.new(:spec)
+
+
+Rake::RDocTask.new(:rdoc) do |rdoc|
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title    = 'Acts As EAV Model'
+  rdoc.options << '--line-numbers' << '--inline-source'
+  rdoc.rdoc_files.include('README.rdoc')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+end
+
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name = "acts_as_eav_model"
+    gem.summary = %Q{Entity Attribute Value Implementation for inclusion in ActiveRecord models.}
+    gem.description = %Q{Entity-attribute-value model (EAV) is a data model that is used in circumstances 
+    where the number of attributes (properties, parameters) that can be used to describe 
+    a thing (an "entity" or "object") is potentially very vast, but the number that will 
+    actually apply to a given entity is relatively modest.}
+    gem.email = ""
+    gem.homepage = "http://github.com/g5search/acts_as_eav_model"
+    gem.has_rdoc=true
+    gem.authors = ["Marcus Wyatt"]
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+  end
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+end
+
 task :default => :spec
-
-desc "Run the specs for #{plugin_name}"
-Spec::Rake::SpecTask.new(:spec) do |t|
-  t.spec_files = FileList['spec/**/*_spec.rb']
-  t.spec_opts  = ["--colour"]
-end
-
-namespace :spec do
-  desc "Generate RCov report for #{plugin_name}"
-  Spec::Rake::SpecTask.new(:rcov) do |t|
-    t.spec_files  = FileList['spec/**/*_spec.rb']
-    t.rcov        = true
-    t.rcov_dir    = 'doc/coverage'
-    t.rcov_opts   = ['--text-report', '--exclude', "spec/,rcov.rb,#{File.expand_path(File.join(File.dirname(__FILE__),'../../..'))}"] 
-  end
-
-  namespace :rcov do
-    desc "Verify RCov threshold for #{plugin_name}"
-    RCov::VerifyTask.new(:verify => "spec:rcov") do |t|
-      t.threshold = 100.0
-      t.index_html = File.join(File.dirname(__FILE__), 'doc/coverage/index.html')
-    end
-  end
-  
-  desc "Generate specdoc for #{plugin_name}"
-  Spec::Rake::SpecTask.new(:doc) do |t|
-    t.spec_files  = FileList['spec/**/*_spec.rb']
-    t.spec_opts   = ["--format", "specdoc:SPECDOC"]
-   end
-
-  namespace :doc do
-    desc "Generate html specdoc for #{plugin_name}"
-    Spec::Rake::SpecTask.new(:html => :rdoc) do |t|
-      t.spec_files    = FileList['spec/**/*_spec.rb']
-      t.spec_opts     = ["--format", "html:doc/rspec_report.html", "--diff"]
-    end
-  end
-end
-
-task :rdoc => :doc
-task "SPECDOC" => "spec:doc"
-
-desc "Generate rdoc for #{plugin_name}"
-Rake::RDocTask.new(:doc) do |t|
-  t.rdoc_dir = 'doc'
-  t.main     = 'README.rdoc'
-  t.title    = "#{plugin_name}"
-  t.template = ENV['RDOC_TEMPLATE']
-  t.options  = ['--line-numbers', '--inline-source', '--all']
-  t.rdoc_files.include('README.rdoc', 'SPECDOC', 'MIT-LICENSE', 'CHANGELOG')
-  t.rdoc_files.include('lib/**/*.rb')
-end
-
-namespace :doc do 
-  desc "Generate all documentation (rdoc, specdoc, specdoc html and rcov) for #{plugin_name}"
-  task :all => ["spec:doc:html", "spec:doc", "spec:rcov", "doc"]
-end
