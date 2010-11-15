@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{acts_as_eav_model}
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Marcus Wyatt"]
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
     "SPECDOC",
     "TODO",
     "VERSION",
+    "acts_as_eav_model.gemspec",
     "doc/classes/ActiveRecord/Acts/EavModel.html",
     "doc/classes/ActiveRecord/Acts/EavModel/ClassMethods.html",
     "doc/classes/ActiveRecord/Acts/EavModel/InstanceMethods.html",
