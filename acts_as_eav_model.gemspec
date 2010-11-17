@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{acts_as_eav_model}
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Marcus Wyatt"]
-  s.date = %q{2010-11-14}
+  s.date = %q{2010-11-17}
   s.description = %q{Entity-attribute-value model (EAV) is a data model that is used in circumstances 
     where the number of attributes (properties, parameters) that can be used to describe 
     a thing (an "entity" or "object") is potentially very vast, but the number that will 
@@ -139,16 +139,16 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<rails>, ["= 3.0.1"])
+      s.add_runtime_dependency(%q<rails>, ["~> 3.0.1"])
       s.add_runtime_dependency(%q<sqlite3-ruby>, [">= 0"])
       s.add_runtime_dependency(%q<jeweler>, [">= 0"])
     else
-      s.add_dependency(%q<rails>, ["= 3.0.1"])
+      s.add_dependency(%q<rails>, ["~> 3.0.1"])
       s.add_dependency(%q<sqlite3-ruby>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
     end
   else
-    s.add_dependency(%q<rails>, ["= 3.0.1"])
+    s.add_dependency(%q<rails>, ["~> 3.0.1"])
     s.add_dependency(%q<sqlite3-ruby>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
   end

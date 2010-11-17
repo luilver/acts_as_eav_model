@@ -2,7 +2,7 @@
 .bundle
 spec/dummy/log/*
 spec/dummy/tmp/**/*
-spec/dummy/db/**/*
+spec/dummy/db/*
 .DS_Store
 *.swp
 .idea/*
