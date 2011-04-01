@@ -363,7 +363,7 @@ module ActiveRecord # :nodoc:
           if MAGIC_FIELD_NAMES.include?(method_id.to_sym)
             respond_to_without_eav_behavior?(method_id, include_private)
           else
-            true
+            false
           end
         end
 
