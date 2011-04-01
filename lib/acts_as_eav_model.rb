@@ -350,7 +350,9 @@ module ActiveRecord # :nodoc:
         # then return an empty array. If you just have a static list the :fields
         # option is most likely easier.
         #
-        def eav_attributes(model); nil end
+        def eav_attributes(model)
+          @eav_attributes ||= []
+        end
         
         ##
         # CLK added a respond_to? implementation so that ActiveRecord AssociationProxy (polymorphic relationships)
@@ -363,7 +365,7 @@ module ActiveRecord # :nodoc:
           if MAGIC_FIELD_NAMES.include?(method_id.to_sym)
             respond_to_without_eav_behavior?(method_id, include_private)
           else
-            false
+            eav_attributes(nil).include?(method_id)
           end
         end
 
