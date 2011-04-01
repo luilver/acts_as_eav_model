@@ -266,7 +266,7 @@ module ActiveRecord # :nodoc:
               after_validation :save_modified_eav_attributes,:on=>:update
               
               # Make attributes seem real
-              alias_method_chain :respond_to?, :eav_behavior
+              #alias_method_chain :respond_to?, :eav_behavior
               alias_method_chain :method_missing, :eav_behavior
 
               private
@@ -361,13 +361,13 @@ module ActiveRecord # :nodoc:
         # Updated when certain magic fields (like timestamp columns) were interfering with saves, etc.
         # http://oldwiki.rubyonrails.org/rails/pages/MagicFieldNames
         #
-        def respond_to_with_eav_behavior?(method_id, include_private = false)
-          if MAGIC_FIELD_NAMES.include?(method_id.to_sym)
-            respond_to_without_eav_behavior?(method_id, include_private)
-          else
-            eav_attributes(nil).include?(method_id)
-          end
-        end
+        #def respond_to_with_eav_behavior?(method_id, include_private = false)
+        #  if MAGIC_FIELD_NAMES.include?(method_id.to_sym)
+        #    respond_to_without_eav_behavior?(method_id, include_private)
+        #  else
+        #    eav_attributes(nil).include?(method_id)
+        #  end
+        #end
 
         private
 
