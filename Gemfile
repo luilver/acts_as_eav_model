@@ -1,7 +1,6 @@
 source "http://rubygems.org"
 
 gem "rails", "~> 3.0.1"
-gem "sqlite3-ruby", :require => "sqlite3"
 gem "jeweler"
 
 if RUBY_VERSION < '1.9'
