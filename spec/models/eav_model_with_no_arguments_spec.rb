@@ -3,6 +3,26 @@ require 'spec_helper'
 describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options in declaration" do
   fixtures :posts, :post_attributes
 
+
+  describe "#respond_to?" do
+    before( :each ) do
+      @blog_post = Post.find_by_title("Following up from my first post.")
+    end
+    it "should be true when there is an eav attribute" do
+      @blog_post.foo = 'bar'
+      @blog_post.should respond_to :foo
+    end
+
+    it "should be true when the method is defined" do
+      method = @blog_post.methods.first
+      @blog_post.should respond_to method
+    end
+
+    it "should not be true when there is no eav attribute and the method isn't defined" do
+      @blog_post.should_not respond_to :no_one_should_ever_write_this_method
+    end
+  end
+
   it "should have many attributes" do
     post_attr = Post.find_by_title("Hello World").post_attributes
     post_attr[0].should be_instance_of(PostAttribute)
