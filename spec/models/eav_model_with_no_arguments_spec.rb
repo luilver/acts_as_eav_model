@@ -25,6 +25,13 @@ describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options i
       @blog_post.example_text = "text"
       @blog_post.example_text?.should be_true
     end
+
+    it "respond_to? eav attribute with question marks" do
+      @blog_post.example_text = "text"
+         require 'ruby-debug'
+         debugger
+      @blog_post.respond_to?(:example_text?).should be_true
+    end
   end
 
   it "should return true if a value exists" do
