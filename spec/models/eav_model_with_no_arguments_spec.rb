@@ -20,11 +20,16 @@ describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options i
     it "should not be true when there is no eav attribute and the method isn't defined" do
       @blog_post.should_not respond_to :no_one_should_ever_write_this_method
     end
+
+    it "should be true when using question marks" do
+      @blog_post.example_text = "text"
+      @blog_post.example_text?.should be_true
+    end
   end
 
   it "should return true if a value exists" do
     @blog_post = Post.find_by_title("Following up from my first post.")
-    @blog_post.id?.should_not be_nil
+    @blog_post.id?.should be_true
   end
 
   it "should have many attributes" do
