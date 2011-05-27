@@ -363,7 +363,7 @@ module ActiveRecord # :nodoc:
         #
         def respond_to_with_eav_behavior?(method_id, include_private = false)
          attributes_association = eav_options_for_instance[:relationship_name]
-         actual_method_without_inquiry = method_id.to_s.gsub!(/\?$/, '').to_sym
+         actual_method_without_inquiry = method_id.to_s.gsub(/\?$/, '').to_sym
 
          if self.send(attributes_association).collect{|model| model.name.to_sym}.include?(actual_method_without_inquiry)
            return true
