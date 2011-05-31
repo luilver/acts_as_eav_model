@@ -366,13 +366,13 @@ module ActiveRecord # :nodoc:
          actual_method_without_inquiry = method_id.to_s.gsub(/\?$/, '').to_sym
 
          if MAGIC_FIELD_NAMES.include?(method_id)
-            return respond_to_without_eav_behavior?(method_id.to_s, include_private)
+            return respond_to_without_eav_behavior?(method_id, include_private)
          end
 
          if self.send(attributes_association).collect{|model| model.name.to_sym}.include?(actual_method_without_inquiry)
            return true
          end
-         respond_to_without_eav_behavior?(method_id.to_s, include_private)
+         respond_to_without_eav_behavior?(method_id, include_private)
         end
 
         private
