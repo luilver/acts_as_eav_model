@@ -83,7 +83,7 @@ module ActiveRecord # :nodoc:
       MAGIC_FIELD_NAMES = [:created_at, :created_on, :updated_at, :updated_on, :created_by, :updated_by, 
         :lock_version, :type, :id, :position, :parent_id, :lft, :rgt, :quote_value, :template, :to_ary,
         :marshal_dump, :marshal_load, :_dump, :_load, :to_yaml_type, :to_yaml, :yaml_initialize, :to_xml, :to_json, :as_json,
-        :from_json, :from_xml,:validate,:validate_on_create,:validate_on_update].freeze
+        :from_json, :from_xml,:validate,:validate_on_create,:validate_on_update]
 
       def self.included(base) # :nodoc:
         base.extend ClassMethods
@@ -365,10 +365,14 @@ module ActiveRecord # :nodoc:
          attributes_association = eav_options_for_instance[:relationship_name]
          actual_method_without_inquiry = method_id.to_s.gsub(/\?$/, '').to_sym
 
+         if MAGIC_FIELD_NAMES.include?(method_id)
+            return respond_to_without_eav_behavior?(method_id.to_s, include_private)
+         end
+
          if self.send(attributes_association).collect{|model| model.name.to_sym}.include?(actual_method_without_inquiry)
            return true
          end
-         respond_to_without_eav_behavior?(method_id, include_private)
+         respond_to_without_eav_behavior?(method_id.to_s, include_private)
         end
 
         private

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options in declaration" do
-  fixtures :posts, :post_attributes
+  fixtures :posts, :post_attributes, :people
 
   describe "#respond_to?" do
     before( :each ) do
@@ -58,7 +58,6 @@ describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options i
 
     PostAttribute.find_by_name_and_post_id('new_attribute', 2).value.should == 'new_value'
     blog_post.new_attribute.should == 'new_value'
-
   end
 
   it "should delete attribute" do
@@ -112,5 +111,28 @@ describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options i
     blog_post.intro.should == 'We deliver quality foobars to consumers nationwide and around the globe'
     blog_post.teaser.should == 'Coming October 7, the foobarantator'
   end
-  
+
+  context "serialized attributes" do
+    before do
+      @blog_post = Post.find_by_title("Hello World")
+
+      def @blog_post._creator
+        _read_attribute :creator
+      end
+
+      @blog_post.creator = {}
+      @blog_post.creator[:foo] = "Bar"
+      @blog_post.creator[:person] = Person.find_by_name("Marcus Wyatt")
+      @blog_post.save!
+      @blog_post.reload
+    end
+
+    it "should correctly deserialize simple objects" do
+      @blog_post.creator[:foo].should == "Bar"
+    end
+
+    it "should correctly deserialize complex object" do
+      @blog_post.creator[:person].email.should == "marcus@example.com"
+    end
+  end
 end

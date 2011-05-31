@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.text     "body"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "creator"
   end
 
   create_table "post_attributes", :force => true do |t|
