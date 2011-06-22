@@ -31,6 +31,11 @@ ActiveRecord::Schema.define(:version => 0) do
     t.datetime "updated_at"
   end
 
+  create_table "comments", :force => true do |t|
+    t.integer "post_id", :null => false
+    t.string  "text"
+  end
+
   create_table "preferences", :force => true do |t|
     t.integer "person_id", :null => false
     t.string  "key",       :null => false
