@@ -352,8 +352,9 @@ module ActiveRecord # :nodoc:
         def eav_attributes(model); nil end
        
         def eav_options_for_instance 
-         eav_options.first.last 
+          eav_options.first.last 
         end
+
         ##
         # CLK added a respond_to? implementation so that ActiveRecord AssociationProxy (polymorphic relationships)
         # does not mask the method_missing implementation here. See:
@@ -362,17 +363,22 @@ module ActiveRecord # :nodoc:
         # http://oldwiki.rubyonrails.org/rails/pages/MagicFieldNames
         #
         def respond_to_with_eav_behavior?(method_id, include_private = false)
-         attributes_association = eav_options_for_instance[:relationship_name]
-         actual_method_without_inquiry = method_id.to_s.gsub(/\?$/, '').to_sym
+          attributes_association = eav_options_for_instance[:relationship_name]
+          actual_method_without_inquiry = method_id.to_s.gsub(/\?$/, '').to_sym
 
-         if MAGIC_FIELD_NAMES.include?(method_id)
+          if MAGIC_FIELD_NAMES.include?(method_id)
             return respond_to_without_eav_behavior?(method_id, include_private)
-         end
+          end
 
-         if self.send(attributes_association).collect{|model| model.name.to_sym}.include?(actual_method_without_inquiry)
+          if respond_to_without_eav_behavior?(method_id, include_private)
            return true
-         end
-         respond_to_without_eav_behavior?(method_id, include_private)
+          elsif self.send(attributes_association).collect{|model| model.name.to_sym}.include?(actual_method_without_inquiry)
+           return true
+          elsif method_id.to_s =~ /\?$/
+           return true
+          else
+           false
+          end
         end
 
         private
