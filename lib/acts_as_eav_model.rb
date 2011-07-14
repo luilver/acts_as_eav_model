@@ -507,6 +507,7 @@ module ActiveRecord # :nodoc:
         def exec_if_related(attribute_name)
           return false if self.class.column_names.include?(attribute_name) || MAGIC_FIELD_NAMES.include?(attribute_name.to_sym)
           return false if attribute_name =~ /^_/
+          return false if attribute_name =~ /t\d+_r\d+/
           each_eav_relation do |model|
             if is_eav_attribute?(attribute_name, model)
               yield model
