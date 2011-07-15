@@ -30,6 +30,10 @@ describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options i
       @blog_post.example_text = "text"
       @blog_post.respond_to?(:example_text?).should be_true
     end
+
+    it "#flatten should be passed to the actual object" do
+      @blog_post.respond_to?(:flatten).should be_false
+    end
   end
 
   it "should return true if a value exists" do

@@ -83,7 +83,7 @@ module ActiveRecord # :nodoc:
       MAGIC_FIELD_NAMES = [:created_at, :created_on, :updated_at, :updated_on, :created_by, :updated_by, 
         :lock_version, :type, :id, :position, :parent_id, :lft, :rgt, :quote_value, :template, :to_ary,
         :marshal_dump, :marshal_load, :_dump, :_load, :to_yaml_type, :to_yaml, :yaml_initialize, :to_xml, :to_json, :as_json,
-        :from_json, :from_xml,:validate,:validate_on_create,:validate_on_update]
+        :from_json, :from_xml, :validate, :validate_on_create, :validate_on_update, :flatten]
 
       def self.included(base) # :nodoc:
         base.extend ClassMethods
