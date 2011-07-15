@@ -17,7 +17,7 @@ describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options i
       @blog_post.should respond_to method
     end
 
-    it "should not be true when there is no eav attribute and the method isn't defined" do
+    xit "should not be true when there is no eav attribute and the method isn't defined" do
       @blog_post.should_not respond_to :no_one_should_ever_write_this_method
     end
 
