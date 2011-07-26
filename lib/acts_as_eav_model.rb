@@ -203,7 +203,6 @@ module ActiveRecord # :nodoc:
         #                                   # the model then method not found is thrown
         #
         def has_eav_behavior(options = {})
-          Rails.logger.debug("HERE OPTIONS=#{options.inspect}")
           # Provide default options
           options[:class_name] ||= self.name + 'Attribute'
           options[:table_name] ||= options[:class_name].tableize
