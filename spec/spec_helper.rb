@@ -29,7 +29,8 @@ RSpec.configure do |config|
   # Remove this line if you don't want Rspec's should and should_not
   # methods or matchers
   require 'rspec/expectations'
-  config.include Rspec::Matchers
+  config.include RSpec::Matchers
+  config.infer_spec_type_from_file_location!
 
   # == Mock Framework
   config.mock_with :rspec

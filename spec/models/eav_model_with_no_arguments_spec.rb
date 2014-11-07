@@ -23,22 +23,22 @@ describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options i
 
     it "should be true when using question marks" do
       @blog_post.example_text = "text"
-      @blog_post.example_text?.should be_true
+      @blog_post.example_text?.should be true
     end
 
     it "respond_to? eav attribute with question marks" do
       @blog_post.example_text = "text"
-      @blog_post.respond_to?(:example_text?).should be_true
+      @blog_post.respond_to?(:example_text?).should be true
     end
 
     it "#flatten should be passed to the actual object" do
-      @blog_post.respond_to?(:flatten).should be_false
+      @blog_post.respond_to?(:flatten).should be false
     end
   end
 
   it "should return true if a value exists" do
     @blog_post = Post.find_by_title("Following up from my first post.")
-    @blog_post.id?.should be_true
+    @blog_post.id?.should be true
   end
 
   it "should have many attributes" do
@@ -46,7 +46,7 @@ describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options i
     post_attr[0].should be_instance_of(PostAttribute)
     post_attr.size.should == 3
   end
-  
+
   it "should create new attribute on save" do
     blog_post = Post.find_by_title("Following up from my first post.")
     blog_post.new_attribute = 'new_value'
@@ -80,7 +80,7 @@ describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options i
     blog_post.comment.should be_nil
     PostAttribute.find_by_id(1).should be_nil
   end
-  
+
   it "should write eav attributes to attributes table" do
     blog_post = Post.find_by_title("Hello World")
     blog_post.intro = 'Blah Blah Blah'
@@ -89,26 +89,26 @@ describe "ActiveRecord Model annotated with 'has_eav_behavior' with no options i
     blog_post.save!
     PostAttribute.find(2).value.should == 'Blah Blah Blah'
   end
-  
+
   it "should return nil when attribute does not exist" do
     blog_post = Post.find_by_title("Hello World")
     blog_post.not_exist.should be_nil
   end
-  
+
   it "should use method missing to make attribute seem as native property" do
     blog_post = Post.find_by_title("Hello World")
     blog_post.comment.should == 'Foo Bar Industries gets two thumbs up'
     blog_post.intro.should == 'We deliver quality foobars to consumers nationwide and around the globe'
     blog_post.teaser.should == 'Coming October 7, the foobarantator'
   end
-  
+
   it "should read attributes using subscript notation" do
     blog_post = Post.find_by_title("Hello World")
     blog_post['comment'].should == 'Foo Bar Industries gets two thumbs up'
     blog_post['intro'].should == 'We deliver quality foobars to consumers nationwide and around the globe'
     blog_post['teaser'].should == 'Coming October 7, the foobarantator'
   end
-  
+
   it "should read the attribute when invoking 'read_attribute'" do
     blog_post = Post.find_by_title("Hello World")
     blog_post.comment.should == 'Foo Bar Industries gets two thumbs up'
