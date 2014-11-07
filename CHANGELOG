@@ -1,3 +1,25 @@
+### Unreleased
+
+#### Enhancements
+
+* Semantic versioning adopted so library tracks with Rails versions
+* Rails Dependency bumped to ~> 3.1
+* Bundler gemspec format adopted
+  * Jeweler removed as a dependency
+  * Rakefile changed to fix rdoc deprecations and use the new bundler defaults
+  * Gemfile.lock removed from version control
+  * Dependencies moved from the Gemfile to the acts_as_eav_model.gemspec
+  * .gitignore updated to reflect changes
+
+#### Bug Fixes
+
+* Fixed some RSpec deprecations
+  * Didn't mess with moving to the new expect syntax
+
+### 0.0.2 - 2010-11-17
+
+### 0.0.1 - 2010-11-14
+
 * First version with base functionality to handle Entity-attribute-value model (EAV) pattern.
 
 * CHANGELOG started [Marcus Wyatt]
