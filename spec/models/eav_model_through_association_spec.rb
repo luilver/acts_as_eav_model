@@ -11,16 +11,16 @@ describe "Validations on ActiveRecord Model through an association" do
   end
 
   it "should return false for a question mark method if it doesn't exist" do
-    @post.made_up_method?.should be_false
-    @comment.post.made_up_method?.should be_false
+    @post.made_up_method?.should be false
+    @comment.post.made_up_method?.should be false
   end
 
   it "should return true for question mark method if it exists" do
     @post.foo = 'baz'
     @post.save!
-    @post.foo?.should be_true
+    @post.foo?.should be true
 
     @comment.reload
-    @comment.post.foo?.should be_true
+    @comment.post.foo?.should be true
   end
 end
